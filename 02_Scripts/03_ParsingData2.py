@@ -1,21 +1,17 @@
 import csv
 from typing import Dict, List
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from collections import defaultdict
 
 ########### Set up our data store...
 @dataclass()
 class StationData:
-	hourlyBalance: List[int]
-	totalHourlyTrips: List[int]
-
-	def __init__(self):
-		self.hourlyBalance = [0 for _ in range(0,24)]
-		self.totalHourlyTrips= [0 for _ in range(0,24)]
+	hourlyBalance: List[int] = field(default_factory=lambda: [0 for _ in range(0,24)])
+	totalHourlyTrips: List[int] = field(default_factory=lambda: [0 for _ in range(0,24)])
 
 # We use a default dict so we don't need to manually
 # create all the stations that we come across
-stations: Dict[str,StationData] = defaultdict(StationData)
+stations: Dict[str, StationData] = defaultdict(StationData)
 
 ########### Read and process the input data
 
@@ -38,7 +34,7 @@ with open('../01_Data/201510_05_09_trips.csv', 'r') as baseData:
 		stations[originName].totalHourlyTrips[tripHour] += 1
 		# The original script treated a trip that starts and ends at the same
 		# station as single count against the station counter. To match this
-		# we update the destation station counter only if it is different
+		# we update the destination station counter only if it is different
 		# to the origin station.
 		if originName != destinationName:
 			stations[destinationName].totalHourlyTrips[tripHour] += 1
@@ -53,6 +49,6 @@ with open('../01_Data/201510_tripSummary2.csv', 'w') as output:
 	
 	# Print out the CSV Data; one line per station...
 	for station_name, station_data in stations.items():
-		row = [station_name] + station_data.hourlyBalance + station_data.totalHourlyTrips
+		row = [station_name] + [str(i) for i in station_data.hourlyBalance] + [str(i) for i in station_data.totalHourlyTrips]
 		csv_writer.writerow(row)
 
