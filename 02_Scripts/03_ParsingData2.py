@@ -36,7 +36,12 @@ with open('../01_Data/201510_05_09_trips.csv', 'r') as baseData:
 		stations[originName].hourlyBalance[tripHour] -= 1
 		stations[destinationName].hourlyBalance[tripHour] += 1
 		stations[originName].totalHourlyTrips[tripHour] += 1
-		stations[destinationName].totalHourlyTrips[tripHour] += 1
+		# The original script treated a trip that starts and ends at the same
+		# station as single count against the station counter. To match this
+		# we update the destation station counter only if it is different
+		# to the origin station.
+		if originName != destinationName:
+			stations[destinationName].totalHourlyTrips[tripHour] += 1
 
 ########### Output the results
 
