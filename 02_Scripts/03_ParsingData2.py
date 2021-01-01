@@ -3,9 +3,17 @@ from typing import Dict, List
 from dataclasses import dataclass, field
 from collections import defaultdict
 
+INPUT_FILENAME  = '../01_Data/201510_05_09_trips.csv'
+OUTPUT_FILENAME = '../01_Data/201510_tripSummary2.csv'
+
 ########### Set up our data store...
 @dataclass()
 class StationData:
+	"""
+	StationData holds:
+		hourlyBalance    - A list of 24 integers (one per hour of the day) - initialised to zero
+		totalHourlyTrips - A list of 24 integers (one per hour of the day) - initialised to zero
+    """
 	hourlyBalance: List[int] = field(default_factory=lambda: [0 for _ in range(0,24)])
 	totalHourlyTrips: List[int] = field(default_factory=lambda: [0 for _ in range(0,24)])
 
@@ -15,8 +23,8 @@ stations: Dict[str, StationData] = defaultdict(StationData)
 
 ########### Read and process the input data
 
-print('Reading and processing trip data...')
-with open('../01_Data/201510_05_09_trips.csv', 'r') as baseData:
+print(f'Reading and processing input data from: {INPUT_FILENAME}')
+with open(INPUT_FILENAME, 'r') as baseData:
 	csv_reader = csv.reader(baseData, delimiter=',')
 	header = next(csv_reader)
 	for trip in csv_reader:
@@ -41,8 +49,8 @@ with open('../01_Data/201510_05_09_trips.csv', 'r') as baseData:
 
 ########### Output the results
 
-print('Creating the output file...')
-with open('../01_Data/201510_tripSummary2.csv', 'w') as output:
+print(f'Outputing parsed data to: {OUTPUT_FILENAME}')
+with open(OUTPUT_FILENAME, 'w') as output:
 	csv_writer = csv.writer(output)
 	header = ['StationName'] + [f'Balance_{x}' for x in range(0,24)] + [f'Total_{x}' for x in range(0,24)]
 	csv_writer.writerow( header )
